@@ -1,0 +1,45 @@
+{
+  "title": "User Registration Form",
+  "fields": [
+    {
+      "name": "fullName",
+      "label": "Full Name",
+      "type": "text",
+      "required": true,
+      "minLength": 3
+    },
+    {
+      "name": "email",
+      "label": "Email Address",
+      "type": "email",
+      "required": true
+    },
+    {
+      "name": "password",
+      "label": "Password",
+      "type": "password",
+      "required": true,
+      "minLength": 6
+    },
+    {
+      "name": "birthDate",
+      "label": "Birth Date",
+      "type": "date",
+      "required": false
+    },
+    {
+      "name": "age",
+      "label": "Age",
+      "type": "number",
+      "required": false,
+      "min": 0
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "dropdown",
+      "required": true,
+      "options": ["Male", "Female", "Other"]
+    }
+  ]
+}
