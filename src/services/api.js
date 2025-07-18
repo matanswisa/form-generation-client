@@ -13,6 +13,13 @@ const API = axios.create({
  * @param {Object} data - The form data object (e.g., { name: "John", email: "john@example.com" })
  */
 export async function submitForm(data) {
-  const response = await API.post('/submit', data);
+  console.log(data)
+  const response = await API.post('/submit', { data });
   return response.data;
 }
+
+
+export const fetchSubmissions = async () => {
+  const res = await API.get('/submissions');
+  return res.data;
+};
