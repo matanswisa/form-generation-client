@@ -1,9 +1,7 @@
 import './App.css'
 import {
   Box,
-  Container,
   FormControl,
-  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -22,33 +20,37 @@ export default function App() {
   };
 
   return (
-    <Box p={4}>
-      <Typography variant="h4" gutterBottom>
-        Form Generator App
-      </Typography>
+    <Box
+      display="flex"
+      gap={4}
+      mt={4}
+      sx={{ flexDirection: { xs: 'column', md: 'row' } }}
+    >
+      <Box flex={1}>
+        <Typography variant="h4" gutterBottom>
+          Form Generator App
+        </Typography>
 
-      <FormControl fullWidth margin="normal">
-        <InputLabel>Select Form</InputLabel>
-        <Select
-          value={selectedFormIndex}
-          label="Select Form"
-          onChange={handleChange}
-        >
-          {formSchemas.map((form, index) => (
-            <MenuItem key={form.formName} value={index}>
-              {form.formName}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={8}>
-          <DynamicForm schema={formSchemas[selectedFormIndex]} />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <SubmissionsStack />
-        </Grid>
-      </Grid>
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Select Form</InputLabel>
+          <Select
+            value={selectedFormIndex}
+            label="Select Form"
+            onChange={handleChange}
+          >
+            {formSchemas.map((form, index) => (
+              <MenuItem key={form.formName} value={index}>
+                {form.formName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <DynamicForm schema={formSchemas[selectedFormIndex]} />
+      </Box>
+      <Box flex={0.7}>
+        <SubmissionsStack />
+      </Box>
     </Box>
   );
 }

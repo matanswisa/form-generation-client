@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -10,9 +10,18 @@ import {
   Grid,
 } from '@mui/material';
 import { submitForm } from '../services/api';
+import { Snackbar, Alert } from '@mui/material';
 
 export function DynamicForm({ schema }) {
-  const { fields, title } = schema;
+  const { fields, formName } = schema;
+
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
+
 
   const initialValues = {};
   fields.forEach(field => {
@@ -52,15 +61,17 @@ export function DynamicForm({ schema }) {
 
   const formik = useFormik({
     initialValues,
-    enableReinitialize: true, // ✅ makes form reset to new schema when `schema` prop changes
+    enableReinitialize: true,
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        await submitForm(values);
-        console.log("Form submitted successfully");
+        const response = await submitForm({ ...values, form_type: formName });
+        setSnackbar({ open: true, message: response.message, severity: 'success' });
         resetForm();
       } catch (error) {
-        console.error(error);
+        const errMsg = error.response.data.detail;
+        console.error(errMsg);
+        setSnackbar({ open: true, message: errMsg, severity: 'error' });
       }
     },
   });
@@ -68,11 +79,26 @@ export function DynamicForm({ schema }) {
 
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h5" gutterBottom>{title || 'Dynamic Form'}</Typography>
+      <Typography variant="h5" gutterBottom>{formName || 'Dynamic Form'}</Typography>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={2}>
-          {fields && fields.map((field) => (
+          {fields ? fields.map((field) => (
             <Grid item xs={12} key={field.name}>
               {field.type === 'dropdown' ? (
                 <TextField
@@ -108,7 +134,7 @@ export function DynamicForm({ schema }) {
                 />
               )}
             </Grid>
-          ))}
+          )) : null}
         </Grid>
 
         <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
