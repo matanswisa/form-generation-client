@@ -9,17 +9,16 @@ import {
   Typography,
   Grid,
 } from '@mui/material';
-import formSchema from '../schema/formSchema.json';
 import { submitForm } from '../services/api';
 
-export function DynamicForm() {
-  const { fields, title } = formSchema;
+export function DynamicForm({ schema }) {
+  const { fields, title } = schema;
 
-  // Build initial values
-  const initialValues = fields.reduce((acc, field) => {
-    acc[field.name] = '';
-    return acc;
-  }, {});
+  const initialValues = {};
+  fields.forEach(field => {
+    initialValues[field.name] = '';
+  });
+
 
   //Yup validation schema
   const validationSchema = Yup.object(
@@ -53,11 +52,12 @@ export function DynamicForm() {
 
   const formik = useFormik({
     initialValues,
+    enableReinitialize: true, // ✅ makes form reset to new schema when `schema` prop changes
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
         await submitForm(values);
-        console.log("form submited successfully");
+        console.log("Form submitted successfully");
         resetForm();
       } catch (error) {
         console.error(error);
@@ -65,13 +65,14 @@ export function DynamicForm() {
     },
   });
 
+
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h5" gutterBottom>{title || 'Dynamic Form'}</Typography>
 
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={2}>
-          {fields.map((field) => (
+          {fields && fields.map((field) => (
             <Grid item xs={12} key={field.name}>
               {field.type === 'dropdown' ? (
                 <TextField
